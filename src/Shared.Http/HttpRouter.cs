@@ -1,10 +1,8 @@
 namespace Shared.Http;
 
 using System.Collections;
-using System.Collections.Specialized;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Web;
 
 public class HttpRouter
 {
@@ -143,21 +141,30 @@ public class HttpRouter
             return RESPONSE_NOT_SENT;
         }
 
-        // Execute middleware pipeline
-        var index = 0;
-        Func<Task>? next = null;
-        next = async () =>
-        {
-            if (index < middleware.Count)
-            {
-                var current = middleware[index++];
-                await current(req, res, props, next!);
-            }
-        };
-
-        await next();
+        // Execute middleware pipeline using immutable recursion
+        await ExecuteMiddlewareAsync(middleware, 0, req, res, props);
 
         return matchedRoute != null ? RESPONSE_SENT : RESPONSE_NOT_SENT;
+    }
+
+    /// <summary>
+    /// Executes middleware at the specified index and creates next function for subsequent middleware.
+    /// Uses immutable recursion pattern to avoid race conditions.
+    /// </summary>
+    private static async Task ExecuteMiddlewareAsync(
+        IReadOnlyList<HttpMiddleware> middleware,
+        int index,
+        HttpListenerRequest req,
+        HttpListenerResponse res,
+        Hashtable props)
+    {
+        if (index >= middleware.Count)
+        {
+            return;
+        }
+
+        var current = middleware[index];
+        await current(req, res, props, () => ExecuteMiddlewareAsync(middleware, index + 1, req, res, props));
     }
 
     /// <summary>
