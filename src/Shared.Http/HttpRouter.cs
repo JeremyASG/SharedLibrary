@@ -45,8 +45,8 @@ public class HttpRouter
     /// </summary>
     public HttpRouter Route(string method, string path, params HttpMiddleware[] middleware)
     {
-        var fullPath = $"{_basePath}{path}";
-        _routes.Add(new RouteEntry(method.ToUpperInvariant(), fullPath, middleware));
+        // Store the relative path - the full path is computed during matching
+        _routes.Add(new RouteEntry(method.ToUpperInvariant(), path, middleware));
         return this;
     }
 
@@ -106,7 +106,8 @@ public class HttpRouter
         RouteEntry? matchedRoute = null;
         foreach (var route in _routes)
         {
-            var routeParams = MatchRoute(route.Path, path, method, route.Method);
+            var fullPath = $"{_basePath}{route.Path}";
+            var routeParams = MatchRoute(fullPath, path, method, route.Method);
             if (routeParams != null)
             {
                 matchedRoute = route;
