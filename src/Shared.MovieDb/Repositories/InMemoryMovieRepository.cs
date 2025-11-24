@@ -39,7 +39,7 @@ public class InMemoryMovieRepository : IMovieRepository
         lock (_lock)
         {
             var results = _movies
-                .Where(m => m.Title.Contains(title, StringComparison.OrdinalIgnoreCase))
+                .Where(m => m.Title != null && m.Title.Contains(title, StringComparison.OrdinalIgnoreCase))
                 .Select(m => CloneMovie(m))
                 .ToList();
             return Task.FromResult<IEnumerable<Movie>>(results);
@@ -52,7 +52,7 @@ public class InMemoryMovieRepository : IMovieRepository
         lock (_lock)
         {
             var results = _movies
-                .Where(m => m.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase))
+                .Where(m => m.Genre != null && m.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase))
                 .Select(m => CloneMovie(m))
                 .ToList();
             return Task.FromResult<IEnumerable<Movie>>(results);
