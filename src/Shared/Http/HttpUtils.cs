@@ -77,7 +77,6 @@ public static class HttpUtils
 	public static async Task ServeStaticFiles(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
 		string rootDir = Configuration.Get("wwwroot.dir", Directory.GetCurrentDirectory())!;
-		
 		string urlPath = req.Url!.AbsolutePath.TrimStart('/');
 		string filePath = Path.Combine(rootDir, urlPath.Replace('/', Path.DirectorySeparatorChar));
 
@@ -128,7 +127,8 @@ public static class HttpUtils
 			if(!isProductionMode)
 			{
 				// Allow everything during development
-				res.AddHeader("Access-Control-Allow-Origin", origin); res.AddHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+				res.AddHeader("Access-Control-Allow-Origin", origin);
+				res.AddHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 				res.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 				res.AddHeader("Access-Control-Allow-Credentials", "true");
 			}
@@ -167,8 +167,6 @@ public static class HttpUtils
 		var (pq, fragment) = (i = pqf.IndexOf("#")) >= 0 ? (pqf.Substring(0, i), pqf.Substring(i + 1)) : (pqf, "");
 		var (path, query) = (i = pq.IndexOf("?")) >= 0 ? (pq.Substring(0, i), pq.Substring(i + 1)) : (pq, "");
 		var parts = new NameValueCollection();
-
-
 
 		// https://john:abc123@site.com:8080/api/v1/users/3?q=0&active=true#bio
 		// scheme://user:pass@host:port/path?query#fragment

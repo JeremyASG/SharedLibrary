@@ -139,8 +139,6 @@ public class HttpRouter
 		await next();
 	}
 
-
-
 	private async Task ParametrizedRouteMatching(HttpListenerRequest req,	HttpListenerResponse res, Hashtable props, Func<Task> next)
 	{
 		foreach(var (method, path, middlewares) in routes)
@@ -184,7 +182,6 @@ public class HttpRouter
 				return null;
 			}
 		}
-		
 		return parameters;
 	}
 }

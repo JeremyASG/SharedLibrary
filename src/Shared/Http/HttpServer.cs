@@ -3,7 +3,6 @@ namespace Shared.Http;
 using Shared.Config;
 using System.Net;
 
-
 public abstract class HttpServer
 {
 	protected HttpRouter router;
@@ -25,10 +24,7 @@ public abstract class HttpServer
 		Console.WriteLine("Server started at " + authority);
 	}
 
-
-
 	public abstract void Init();
-
 
 	public async Task Start()
 	{
@@ -40,8 +36,6 @@ public abstract class HttpServer
 			_ = router.HandleContextAsync(ctx);
 		}
 	}
-
-
 
 	public void Stop()
 	{
