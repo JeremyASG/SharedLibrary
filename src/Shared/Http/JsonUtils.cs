@@ -44,4 +44,18 @@ public static class JsonUtils
 			await HttpUtils.SendResponse(req, res, props, result.StatusCode, JsonSerializer.Serialize(jsonApiPayload, JsonSerializerOptions.Web));
 		}
 	}
+
+	public static async Task SendJsonResultResponse<T>(HttpListenerRequest req, HttpListenerResponse res, Hashtable props, Result<T> result)
+	{
+		if(result.IsError)
+		{
+			res.Headers["Cache-Control"] = "no-store";
+			var jsonApiError = new { error = result.Error!.Message };
+			await HttpUtils.SendResponse(req, res, props, result.StatusCode, JsonSerializer.Serialize(jsonApiError, JsonSerializerOptions.Web));
+		}
+		else
+		{
+			await HttpUtils.SendResponse(req, res, props, result.StatusCode, JsonSerializer.Serialize(result.Payload, JsonSerializerOptions.Web));
+		}
+	}
 }
